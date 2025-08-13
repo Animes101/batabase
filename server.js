@@ -1,7 +1,16 @@
 const express=require('express');
 const app=express();
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
+
+
+
+// JSON ডেটা পড়তে
+app.use(bodyParser.json());
+
+// URL encoded ডেটা পড়তে
+app.use(bodyParser.urlencoded({ extended: true }));
 //create schema users
 
 
@@ -50,9 +59,41 @@ app.get('/users', async (req, res) => {
 });
 
 
-app.post('/users', (req,res)=>{
+app.post('/users', async(req,res)=>{
 
-    res.send('users route')
+    
+    try{
+
+        const name=req.body.name;
+        const age=req.body.age;
+        const langue=req.body.langue;
+
+        const newUser=new users({
+            name:name,
+            age:age,
+            langue:langue,
+        });
+
+         const userdata=await newUser.save();
+
+         if(userdata){
+
+            res.send('success');
+         }else{
+
+            res.send('not success')
+         }
+
+
+    }catch(err){
+
+        res.status(400).send({
+            success:false,
+            message:'errror '
+        })
+
+
+    }
 
 
 })
